@@ -1,0 +1,17 @@
+aws_region  = "us-east-1"
+environment = "prod"
+app_name    = "flask-app-server"
+
+ami_id   = "ami-0a2b6680ef4ed0596"
+
+key_name  = "Your-Key-Pair-Name"
+
+ssh_allowed_cidrs = ["Your-IP-Address/32"] # change this to your IP address ``` curl ifconfig.me ```
+
+db_password = "Your-Database-Password"
+
+instance_type = "t3.micro"
+
+db_name = "Your-Database-Name"
+
+db_username = "Your-Database-Username"
