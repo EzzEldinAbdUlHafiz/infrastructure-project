@@ -1,0 +1,67 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/flask_app
+- name: Install system packages
+  apt:
+    name: [python3, python3-pip, python3-venv, gcc, git, libpq-dev]
+    state: present
+    update_cache: yes
+
+- name: Create app system user
+  user:
+    name: "{{ app_user }}"
+    system: yes
+    shell: /usr/sbin/nologin
+    create_home: no
+
+- name: Create app directory
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+
+- name: Copy Flask app files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ app_dir }}/{{ item | basename }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+  loop:
+    - "{{ playbook_dir }}/../app.py"
+    - "{{ playbook_dir }}/../requirements.txt"
+
+- name: Install Python packages in virtualenv
+  pip:
+    requirements: "{{ app_dir }}/requirements.txt"
+    virtualenv: "{{ app_dir }}/venv"
+    virtualenv_command: python3 -m venv
+
+- name: Fix virtualenv ownership
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    recurse: yes
+
+- name: Deploy .env file
+  template:
+    src: env.j2
+    dest: "{{ app_dir }}/.env"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: "0600"
+
+- name: Deploy systemd service
+  template:
+    src: flask-app.service.j2
+    dest: /etc/systemd/system/flask-app.service
+  notify: restart flask-app
+
+- name: Enable and start flask-app
+  systemd:
+    name: flask-app
+    enabled: yes
+    state: started
+    daemon_reload: yes

@@ -1,0 +1,7 @@
+#SPDX-License-Identifier: MIT-0
+---
+# defaults file for roles/flask_app
+app_name: flask-app
+app_user: flaskuser
+app_dir: /opt/flask-app
+app_port: 8000

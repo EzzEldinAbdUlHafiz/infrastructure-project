@@ -1,0 +1,8 @@
+- name: Deploy Flask application
+  hosts: webservers
+  vars_files:
+    - group_vars/webservers.yml
+    - group_vars/vault.yml
+  roles:
+    - flask_app
+    - nginx

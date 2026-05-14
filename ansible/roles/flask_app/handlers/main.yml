@@ -1,0 +1,8 @@
+#SPDX-License-Identifier: MIT-0
+---
+# handlers file for roles/flask_app
+- name: restart flask-app
+  systemd:
+    name: flask-app
+    state: restarted
+    daemon_reload: yes
